@@ -1,0 +1,36 @@
+{
+  "name": "jenga",
+  "version": "0.0.1",
+  "description": "z-index management",
+  "main": "dist/jenga.js",
+  "private": true,
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jstrimpel/jenga.git"
+  },
+  "keywords": [
+    "z-index"
+  ],
+  "author": {
+    "name": "Jason Strimpel",
+    "email": "jstrimpel@gmail.com"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/jstrimpel/jenga/blob/master/license.txt"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/jstrimpel/jenga/issues"
+  },
+  "homepage": "https://github.com/jstrimpel/jenga",
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-preprocess": "3.0.1",
+    "grunt-contrib-concat": "~0.1.2"
+  }
+}
