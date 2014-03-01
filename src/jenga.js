@@ -1,3 +1,5 @@
+// this will be used for addressing all the browser & version specific
+// items that impact stacking contexts
 // fixed - the version where position fixed started creating a stacking context
 var browsers = {
     chrome: {
@@ -25,8 +27,12 @@ var browser = (function () {
 })();
 
 var isFixedStackingCtx = (function () {
-    return browsers[browser.name].fixed >= browser.version;
+    return browsers[browser.name].fixed >= parseInt(browser.version, 10);
 })();
+
+function isFunction(thing) {
+    return typeof thing === 'function';
+}
 
 function isPosAndHasZindex(el) {
     return el.style.position !== 'static' && el.style.zIndex !== 'auto';
@@ -59,36 +65,60 @@ function doesStyleCreateStackingCtx(el) {
 }
 
 function modifyZindex(el, increment) {
-    var stackingCtxEl = this.getStackingCtx(el);
+    var stackingCtxEl = jenga.getStackingCtx(el);
     var siblings = stackingCtxEl.childNodes;
-    var siblingsMaxMinZindex = 0;
+    var siblingsMaxMinZindex = increment ? 0 : -1;
+
+    var siblingZindex;
 
     for (var i = 0; i < siblings.length; i++) {
-        if (isPosAndHasZindex(siblings[i]) && siblings[i] !== el) {
-            var siblingZindex = siblings[i].styles.zIndex;
+        if (siblings[i].nodeType === 1 && isPosAndHasZindex(siblings[i]) && siblings[i] !== el) {
+            siblingZindex = parseInt(siblings[i].style.zIndex, 10);
+            if (isNaN(siblingZindex)) {
+                continue;
+            }
+
             if (increment) {
-                siblingsMaxMinZindex = (siblingZindex > siblingsMaxMinZindex && siblingsMaxMinZindex) > el.styles.zIndex ?
+                siblingsMaxMinZindex = siblingZindex > siblingsMaxMinZindex ?
                     siblingZindex : siblingsMaxMinZindex;
             } else {
-                siblingsMaxMinZindex = (siblingZindex < siblingsMaxMinZindex && siblingsMaxMinZindex) < el.styles.zIndex ?
+                siblingsMaxMinZindex = siblingsMaxMinZindex < 0 || siblingZindex < siblingsMaxMinZindex ?
                     siblingZindex : siblingsMaxMinZindex;
             }
         }
     }
 
-    el.styles.zIndex = increment ? siblingsMaxMinZindex + 1 : siblingsMaxMinZindex - 1;
+    // adjusted z-index is 0 and sending to back then bump all other elements up by 1
+    if (!siblingsMaxMinZindex && !increment) {
+        for (i = 0; i < siblings.length; i++) {
+            if (siblings[i].nodeType === 1 && siblings[i] !== el) {
+                siblingZindex = parseInt(siblings[i].style.zIndex, 10);
+                if (isNaN(siblingZindex)) {
+                    continue;
+                }
+
+                siblings[i].style.zIndex = ++siblingZindex;
+            }
+        }
+    }
+
+    el.style.zIndex = increment ? siblingsMaxMinZindex + 1 : (siblingsMaxMinZindex ? siblingsMaxMinZindex - 1 : 0);
 }
 
 function moveUpDown(el, createStackingCtx, root, increment) {
-    var stackingCtxEl = getStackingCtx(el);
+    var stackingCtxEl = jenga.getStackingCtx(el);
 
     if (createStackingCtx && stackingCtxEl !== el.parentNode) {
-        el.parentNode.styles.position = 'relative';
-        el.parentNode.styles.zIndex = 0;
+        if (isFunction(createStackingCtx)) {
+            createStackingCtx(el.parentNode);
+        } else {
+            el.parentNode.style.position = 'relative';
+            el.parentNode.style.zIndex = 0;
+        }
     }
 
     modifyZindex(el, increment);
-    if (root && (root !== getStackingCtx(el) && stackingCtxEl.tageName !== 'HTML')) {
+    if (root && (root !== jenga.getStackingCtx(el) && stackingCtxEl.tageName !== 'HTML')) {
         moveUpDown(stackingCtxEl, createStackingCtx, root, increment);
     }
 }
@@ -102,14 +132,14 @@ var jenga = {
     getStackingCtx: function (el) {
         var parentNode = el.parentNode;
 
-        while (!isStackingCtx(parentNode)) {
+        while (!jenga.isStackingCtx(parentNode)) {
             parentNode = parentNode.parentNode;
         }
 
         return parentNode;
     },
 
-    bringToTop: function (el, createStackingCtx, root) {
+    bringToFront: function (el, createStackingCtx, root) {
         moveUpDown(el, createStackingCtx, root, true);
     },
 

@@ -23,6 +23,11 @@ module.exports = function (grunt) {
                 files: {
                     'dist/jenga.amd.js': 'src/jenga.amd.js'
                 }
+            },
+            plugin: {
+                files: {
+                    'dist/jenga.plugin.js': 'src/jenga.plugin.js'
+                }
             }
         },
         concat: {
@@ -36,6 +41,10 @@ module.exports = function (grunt) {
             amd: {
                 src: 'dist/jenga.amd.js',
                 dest: 'dist/jenga.amd.js'
+            },
+            plugin: {
+                src: 'dist/jenga.plugin.js',
+                dest: 'dist/jenga.plugin.js'
             }
         }
     });
@@ -43,6 +52,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.registerTask('default', [
-        'preprocess:global', 'concat:global', 'preprocess:amd', 'concat:amd'
+        'preprocess:global', 'concat:global', 'preprocess:amd', 'concat:amd', 'preprocess:plugin', 'concat:plugin'
     ]);
 };
