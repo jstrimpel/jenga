@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>jenga example</title>
+    </head>
+    <body>
+        <div class="1"></div>
+        <div class="1.1"></div>
+        <div class="1.2">
+            <div class="2">
+                <div class="3"></div>
+                <div class="3"></div>
+                <div id="foo" class="3"></div>
+            </div>
+        </div>
+        <script src="../dist/jenga.js"></script>
+        <script type="text/javascript">
+            jenga.sendToBack(document.getElementById('foo'));
+        </script>
+    </body>
+</html>

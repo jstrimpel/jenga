@@ -27,6 +27,10 @@ var browser = (function () {
 })();
 
 var isFixedStackingCtx = (function () {
+    if (!browsers[browser.name] || !browsers[browser.name].fixed) {
+        return false;
+    }
+
     return browsers[browser.name].fixed >= parseInt(browser.version, 10);
 })();
 
@@ -35,7 +39,8 @@ function isFunction(thing) {
 }
 
 function isPosAndHasZindex(el) {
-    return el.style.position !== 'static' && el.style.zIndex !== 'auto';
+    return (el.style.position && el.style.position !== 'static') && (el.style.zIndex !== 'auto' &&
+        !isNaN(parseInt(el.style.zIndex, 10)));
 }
 
 // these values cause an element to create a stacking context
@@ -64,15 +69,37 @@ function doesStyleCreateStackingCtx(el) {
     return false;
 }
 
+function findElAncestor(el, ancestorEl, stackingCtxEl) {
+    var parentNode = el.parentNode;
+    if (stackingCtxEl === parentNode || parentNode.tagName === 'BODY') {
+        return el;
+    }
+
+    while (parentNode.parentNode.tagName !== 'BODY') {
+        parentNode = parentNode.parentNode;
+    }
+
+    return parentNode;
+}
+
 function modifyZindex(el, increment) {
     var stackingCtxEl = jenga.getStackingCtx(el);
-    var siblings = stackingCtxEl.childNodes;
+    var siblings;
     var siblingsMaxMinZindex = increment ? 0 : -1;
-
+    var elAncestor = el;
     var siblingZindex;
+    var i = 0;
 
-    for (var i = 0; i < siblings.length; i++) {
-        if (siblings[i].nodeType === 1 && isPosAndHasZindex(siblings[i]) && siblings[i] !== el) {
+    stackingCtxEl = stackingCtxEl.tagName === 'HTML' ? document.getElementsByTagName('body')[0] : stackingCtxEl;
+    siblings = stackingCtxEl.childNodes;
+    if (stackingCtxEl !== el.parentNode) {
+        for (i; i < siblings.length; i++) {
+            elAncestor = findElAncestor(el, siblings[i], stackingCtxEl);
+        }
+    }
+
+    for (i = 0; i < siblings.length; i++) {
+        if (siblings[i].nodeType === 1 && isPosAndHasZindex(siblings[i]) && siblings[i] !== elAncestor) {
             siblingZindex = parseInt(siblings[i].style.zIndex, 10);
             if (isNaN(siblingZindex)) {
                 continue;
@@ -102,7 +129,10 @@ function modifyZindex(el, increment) {
         }
     }
 
-    el.style.zIndex = increment ? siblingsMaxMinZindex + 1 : (siblingsMaxMinZindex ? siblingsMaxMinZindex - 1 : 0);
+    elAncestor.style.zIndex = increment ? siblingsMaxMinZindex + 1 : (siblingsMaxMinZindex > 0 ? siblingsMaxMinZindex - 1 : 0);
+    if (!isPosAndHasZindex(elAncestor)) {
+        elAncestor.style.position = 'relative';
+    }
 }
 
 function moveUpDown(el, createStackingCtx, root, increment) {
@@ -118,7 +148,7 @@ function moveUpDown(el, createStackingCtx, root, increment) {
     }
 
     modifyZindex(el, increment);
-    if (root && (root !== jenga.getStackingCtx(el) && stackingCtxEl.tageName !== 'HTML')) {
+    if (root && (root !== jenga.getStackingCtx(el) && stackingCtxEl.tagName !== 'BODY')) {
         moveUpDown(stackingCtxEl, createStackingCtx, root, increment);
     }
 }

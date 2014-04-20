@@ -46,11 +46,17 @@ module.exports = function (grunt) {
                 src: 'dist/jenga.plugin.js',
                 dest: 'dist/jenga.plugin.js'
             }
+        },
+        mocha_phantomjs: {
+            all: ['test/**/*.html']
         }
     });
 
     grunt.loadNpmTasks('grunt-preprocess');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-mocha-phantomjs');
+
+    grunt.registerTask('test', ['mocha_phantomjs']);
     grunt.registerTask('default', [
         'preprocess:global', 'concat:global', 'preprocess:amd', 'concat:amd', 'preprocess:plugin', 'concat:plugin'
     ]);

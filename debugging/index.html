@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>jenga example</title>
+    </head>
+    <body>
+        <div style="z-index: 0; position: relative;"></div>
+        <div style="z-index: 5; position: relative;"></div>
+        <div style="z-index: 3; position: relative;" id="foo"></div>
+        <script src="../dist/jenga.js"></script>
+        <script type="text/javascript">
+            jenga.sendToBack(document.getElementById('foo'));
+        </script>
+    </body>
+</html>
