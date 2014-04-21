@@ -15,7 +15,7 @@ Jenga is highly experimental at this time!
 Jenga can be used to adjust z-indexes, find an element’s stacking context, and determine if an element creates a stacking context.
 
 ```javascript
-// el - the element to be raised
+// el - the element of interest
 // createStackingCtx - if el.parentNode doesn't create a stacking
 // context then force a stacking context on el.parentNode
 // root - if createStackingCtx is false the element at which to
