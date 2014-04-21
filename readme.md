@@ -12,7 +12,7 @@ about managing z-indexes given the complexity of [stacking contexts](http://www.
 Jenga is highly experimental at this time!
 
 ## Usage
-Jenga can be used to adjust z-indexes, find an element’s stacking context, and determine if an element creates a stacking context
+Jenga can be used to adjust z-indexes, find an element’s stacking context, and determine if an element creates a stacking context.
 
 ```javascript
 // el - the element to be raised
