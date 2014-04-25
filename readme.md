@@ -10,7 +10,7 @@ about Richard at that point and time was the way that most developers have felt 
 the complexity of [stacking contexts](http://www.w3.org/TR/CSS21/zindex.html).
 
 ## Disclaimer
-Jenga is highly experimental at this time!
+Jenga is highly experimental and untested.
 
 ## Usage
 Jenga can be used to adjust z-indexes, find an element’s stacking context, and determine if an element creates a stacking context.
