@@ -156,7 +156,8 @@ function moveUpDown(el, createStackingCtx, root, increment) {
 var jenga = {
 
     isStackingCtx: function (el) {
-        return el.tagName === 'HTML' || (isPosAndHasZindex(el) && doesStyleCreateStackingCtx(el));
+        return el.nodeType === 11 || el.tagName === 'HTML' ||
+            (isPosAndHasZindex(el) && doesStyleCreateStackingCtx(el));
     },
 
     getStackingCtx: function (el) {

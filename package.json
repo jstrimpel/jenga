@@ -1,6 +1,6 @@
 {
   "name": "jenga",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "z-index management",
   "main": "dist/jenga.js",
   "scripts": {

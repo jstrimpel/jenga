@@ -2,7 +2,7 @@
   "name": "jenga",
   "description": "z-index management",
   "authors": [{ "name": "Jason Strimpel", "email": "jstrimpel@gmail.com" }],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/jenga.js",
   "repository": {
     "type": "git",

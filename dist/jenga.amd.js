@@ -1,6 +1,6 @@
 // Jenga: fuck z-indexes
 // ----------------------------------
-// v0.0.1
+// v0.0.2
 //
 // Copyright (c)2014 Jason Strimpel
 // Distributed under MIT license
@@ -166,7 +166,8 @@ define(function () {
     var jenga = {
     
         isStackingCtx: function (el) {
-            return el.tagName === 'HTML' || (isPosAndHasZindex(el) && doesStyleCreateStackingCtx(el));
+            return el.nodeType === 11 || el.tagName === 'HTML' ||
+                (isPosAndHasZindex(el) && doesStyleCreateStackingCtx(el));
         },
     
         getStackingCtx: function (el) {
